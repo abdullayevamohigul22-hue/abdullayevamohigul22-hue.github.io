@@ -104,17 +104,13 @@ opacity:.9;
 }
 </style>
 </head>
+
 <body>
 
 <header>
 <div class="logo">MOHI MARKET</div>
 
-<input
-class="search"
-type="text"
-id="search"
-placeholder="Mahsulot qidirish..."
->
+<input class="search" type="text" id="search" placeholder="Mahsulot qidirish...">
 
 <div class="cart">
 🛒 <span id="cartCount">0</span>
@@ -129,57 +125,56 @@ Katta Chegirmalar
 
 <script>
 
+// PRODUCTS
 const products = [
-
 {
+id:1,
 name:"iPhone 15 Pro",
-price:"15 000 000",
+price:15000000,
 image:"https://picsum.photos/300/200?1"
 },
-
 {
+id:2,
 name:"Samsung S24",
-price:"11 000 000",
+price:11000000,
 image:"https://picsum.photos/300/200?2"
 },
-
 {
+id:3,
 name:"MacBook Air",
-price:"18 000 000",
+price:18000000,
 image:"https://picsum.photos/300/200?3"
 },
-
 {
+id:4,
 name:"AirPods Pro",
-price:"2 500 000",
+price:2500000,
 image:"https://picsum.photos/300/200?4"
 },
-
 {
+id:5,
 name:"Smart TV",
-price:"6 000 000",
+price:6000000,
 image:"https://picsum.photos/300/200?5"
 },
-
 {
+id:6,
 name:"PlayStation 5",
-price:"8 500 000",
+price:8500000,
 image:"https://picsum.photos/300/200?6"
 }
-
 ];
 
-let cart = 0;
+// CART (REAL)
+let cart = [];
 
-const productsDiv =
-document.getElementById("products");
+// SHOW PRODUCTS
+const productsDiv = document.getElementById("products");
 
 function showProducts(list){
+productsDiv.innerHTML = "";
 
-productsDiv.innerHTML="";
-
-list.forEach(product=>{
-
+list.forEach(product => {
 productsDiv.innerHTML += `
 <div class="card">
 
@@ -191,43 +186,42 @@ productsDiv.innerHTML += `
 ${product.price} so'm
 </div>
 
-<button onclick="addToCart()">
+<button onclick="addToCart(${product.id})">
 Savatchaga qo'shish
 </button>
 
 </div>
 `;
-
 });
-
 }
 
 showProducts(products);
 
-function addToCart(){
+// ADD TO CART
+function addToCart(productId){
 
-cart++;
+const product = products.find(p => p.id === productId);
 
-document.getElementById("cartCount")
-.innerText = cart;
+cart.push(product);
 
+updateCart();
 }
 
-document
-.getElementById("search")
-.addEventListener("keyup", function(){
+// UPDATE CART COUNT
+function updateCart(){
+document.getElementById("cartCount").innerText = cart.length;
+}
 
-let value =
-this.value.toLowerCase();
+// SEARCH
+document.getElementById("search").addEventListener("keyup", function(){
 
-let filtered =
-products.filter(product =>
-product.name.toLowerCase()
-.includes(value)
+let value = this.value.toLowerCase();
+
+let filtered = products.filter(product =>
+product.name.toLowerCase().includes(value)
 );
 
 showProducts(filtered);
-
 });
 
 </script>
