@@ -6,17 +6,11 @@
 <title>Mohi Market</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 
-body{
-background:#f5f5f5;
-}
+body{background:#f5f5f5}
 
+/* HEADER */
 header{
 background:#7000ff;
 padding:15px 30px;
@@ -28,36 +22,25 @@ position:sticky;
 top:0;
 }
 
-.logo{
-font-size:28px;
-font-weight:bold;
-}
+.logo{font-size:28px;font-weight:bold}
 
 .search{
-width:40%;
+width:35%;
 padding:10px;
 border:none;
 border-radius:8px;
 }
 
-.cart{
-font-size:20px;
-font-weight:bold;
-}
-
-.banner{
-height:250px;
-background:linear-gradient(135deg,#7000ff,#9b59ff);
+/* LAYOUT */
+.container{
 display:flex;
-justify-content:center;
-align-items:center;
-color:white;
-font-size:40px;
-font-weight:bold;
+gap:20px;
+padding:20px;
 }
 
+/* PRODUCTS */
 .products{
-padding:20px;
+flex:3;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:20px;
@@ -70,23 +53,9 @@ border-radius:12px;
 box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
-.card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:10px;
-}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:10px}
 
-.card h3{
-margin-top:10px;
-}
-
-.price{
-color:#7000ff;
-font-weight:bold;
-font-size:20px;
-margin-top:8px;
-}
+.price{color:#7000ff;font-weight:bold;margin-top:8px}
 
 button{
 width:100%;
@@ -99,8 +68,39 @@ border-radius:8px;
 cursor:pointer;
 }
 
-button:hover{
-opacity:.9;
+/* CART PANEL */
+.cartPanel{
+flex:1;
+background:white;
+padding:15px;
+border-radius:12px;
+height:fit-content;
+position:sticky;
+top:80px;
+}
+
+.cartItem{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+font-size:14px;
+}
+
+.removeBtn{
+background:red;
+padding:5px;
+font-size:12px;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+.total{
+margin-top:15px;
+font-weight:bold;
+font-size:18px;
+color:#7000ff;
 }
 </style>
 </head>
@@ -109,64 +109,43 @@ opacity:.9;
 
 <header>
 <div class="logo">MOHI MARKET</div>
-
-<input class="search" type="text" id="search" placeholder="Mahsulot qidirish...">
-
-<div class="cart">
-🛒 <span id="cartCount">0</span>
-</div>
+<input class="search" id="search" placeholder="Qidirish...">
+<div>🛒 <span id="cartCount">0</span></div>
 </header>
 
-<div class="banner">
-Katta Chegirmalar
+<div class="container">
+
+<!-- PRODUCTS -->
+<div class="products" id="products"></div>
+
+<!-- CART -->
+<div class="cartPanel">
+<h3>Savatcha</h3>
+<div id="cartList"></div>
+<div class="total">Jami: <span id="totalPrice">0</span> so'm</div>
 </div>
 
-<div class="products" id="products"></div>
+</div>
 
 <script>
 
 // PRODUCTS
 const products = [
-{
-id:1,
-name:"iPhone 15 Pro",
-price:15000000,
-image:"https://picsum.photos/300/200?1"
-},
-{
-id:2,
-name:"Samsung S24",
-price:11000000,
-image:"https://picsum.photos/300/200?2"
-},
-{
-id:3,
-name:"MacBook Air",
-price:18000000,
-image:"https://picsum.photos/300/200?3"
-},
-{
-id:4,
-name:"AirPods Pro",
-price:2500000,
-image:"https://picsum.photos/300/200?4"
-},
-{
-id:5,
-name:"Smart TV",
-price:6000000,
-image:"https://picsum.photos/300/200?5"
-},
-{
-id:6,
-name:"PlayStation 5",
-price:8500000,
-image:"https://picsum.photos/300/200?6"
-}
+{id:1,name:"iPhone 15 Pro",price:15000000,image:"https://picsum.photos/300/200?1"},
+{id:2,name:"Samsung S24",price:11000000,image:"https://picsum.photos/300/200?2"},
+{id:3,name:"MacBook Air",price:18000000,image:"https://picsum.photos/300/200?3"},
+{id:4,name:"AirPods Pro",price:2500000,image:"https://picsum.photos/300/200?4"},
+{id:5,name:"Smart TV",price:6000000,image:"https://picsum.photos/300/200?5"},
+{id:6,name:"PS5",price:8500000,image:"https://picsum.photos/300/200?6"}
 ];
 
-// CART (REAL)
-let cart = [];
+// CART
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+// SAVE CART
+function saveCart(){
+localStorage.setItem("cart", JSON.stringify(cart));
+}
 
 // SHOW PRODUCTS
 const productsDiv = document.getElementById("products");
@@ -174,22 +153,13 @@ const productsDiv = document.getElementById("products");
 function showProducts(list){
 productsDiv.innerHTML = "";
 
-list.forEach(product => {
+list.forEach(p => {
 productsDiv.innerHTML += `
 <div class="card">
-
-<img src="${product.image}">
-
-<h3>${product.name}</h3>
-
-<div class="price">
-${product.price} so'm
-</div>
-
-<button onclick="addToCart(${product.id})">
-Savatchaga qo'shish
-</button>
-
+<img src="${p.image}">
+<h3>${p.name}</h3>
+<div class="price">${p.price} so'm</div>
+<button onclick="addToCart(${p.id})">Savatchaga</button>
 </div>
 `;
 });
@@ -198,31 +168,57 @@ Savatchaga qo'shish
 showProducts(products);
 
 // ADD TO CART
-function addToCart(productId){
-
-const product = products.find(p => p.id === productId);
-
+function addToCart(id){
+let product = products.find(p => p.id === id);
 cart.push(product);
-
-updateCart();
+saveCart();
+renderCart();
 }
 
-// UPDATE CART COUNT
-function updateCart(){
+// REMOVE
+function removeFromCart(index){
+cart.splice(index,1);
+saveCart();
+renderCart();
+}
+
+// RENDER CART
+function renderCart(){
+
 document.getElementById("cartCount").innerText = cart.length;
+
+let cartList = document.getElementById("cartList");
+cartList.innerHTML = "";
+
+let total = 0;
+
+cart.forEach((item, index) => {
+total += item.price;
+
+cartList.innerHTML += `
+<div class="cartItem">
+<span>${item.name}</span>
+<button class="removeBtn" onclick="removeFromCart(${index})">X</button>
+</div>
+`;
+});
+
+document.getElementById("totalPrice").innerText = total;
 }
 
 // SEARCH
 document.getElementById("search").addEventListener("keyup", function(){
+let val = this.value.toLowerCase();
 
-let value = this.value.toLowerCase();
-
-let filtered = products.filter(product =>
-product.name.toLowerCase().includes(value)
+let filtered = products.filter(p =>
+p.name.toLowerCase().includes(val)
 );
 
 showProducts(filtered);
 });
+
+// INIT
+renderCart();
 
 </script>
 
